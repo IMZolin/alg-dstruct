@@ -1,0 +1,14 @@
+/Debug
+/1-LAB-A13*
+/x64
+/Release
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.suo
+*.db
+*.png
+/.vs
+/packages
+*.config
