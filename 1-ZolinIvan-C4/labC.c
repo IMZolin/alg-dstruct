@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include<Windows.h>
 #pragma warning(disable : 4996)
 #define ERROR -1
+#define MAX_VERTECIES 5000
+#define RAND 1 + rand() % MAX_VERTECIES
 /***************************************Matrix and queue structure****************************************************/
 typedef struct matrix
 {
@@ -38,6 +42,7 @@ matrix_t* CreateMatrix(int size)
 	if (matrix == NULL)
 	{
 		printf("Error of memory allocation\n");
+		free(items);
 		exit(1);
 	}
 
@@ -79,6 +84,7 @@ queue_t* CreateQueue(int capacity)
 	if (queue == NULL)
 	{
 		printf("Error of memory allocation\n");
+		free(items);
 		exit(1);
 	}
 
@@ -161,6 +167,7 @@ void BFS(matrix_t* graph)
 	if (visited == NULL)
 	{
 		printf("Memory allocation error\n");
+		DestroyMatrix(graph);
 		exit(EXIT_FAILURE);
 	}
 	queue_t* q = CreateQueue(graph->size);
@@ -178,19 +185,67 @@ void BFS(matrix_t* graph)
 				AddElement(q, j);
 			}
 
-		printf("%d ", i);
+		//printf("%d ", i);
 	}
 
 	free(visited);
 	DestroyMatrix(q);
 }
 
-int main()
+/**
+ * CPU: Intel(R) Core(TM) i5-9300H CPU 2.40GHz
+ * RAM: Single-Channel 1200 MHz 17-17-17-39
+ * SSD: NVMe 4x 8 GT/s
+ *
+ * Vertecies amount: 5000
+ *
+ * Stress Test results:
+ *     Memory used: 99.46 MB
+ *
+ *	   BFS execution time: 30 seconds
+ */
+void StressTest()
 {
-	matrix_t* graph = GetGraph();
+	FILE* filePtr = fopen("Graph.txt", "w+");
+	if (filePtr == NULL)
+	{
+		return;
+	}
+	matrix_t* graph = CreateMatrix(MAX_VERTECIES);
+	InitMatrix(graph);
+	srand(time(NULL));
+
+	fprintf(filePtr, "%d\n", MAX_VERTECIES + 1);
+	fprintf(filePtr, "0 1\n");
+
+	for (int i = 0, vertex = 0; i < MAX_VERTECIES; i++)
+	{
+		if ((vertex = RAND) != (i + 1))
+		{
+			fprintf(filePtr, "%d %d\n", i + 1, RAND);
+			--i;
+		}
+		else
+		{
+			fprintf(filePtr, "%d %d\n", vertex, RAND);
+		}
+	}
+
+	fprintf(filePtr, "\n");
+
+	fseek(filePtr, SEEK_SET, 0);
 
 	BFS(graph);
 
-	DestroyMatrix(graph);
+	fclose(filePtr);
+	free(graph);
+	//printf("\n%d",clock()/ CLK_TCK);
+}
+int main()
+{
+	//matrix_t* graph = GetGraph();
+	//BFS(graph);
+	//DestroyMatrix(graph);
+	StressTest();
 	return 0;
 }
