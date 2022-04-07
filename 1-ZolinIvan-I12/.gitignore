@@ -1,2 +1,9 @@
-.idea/
-cmake-build-debug/
+/Debug
+/Release
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.suo
+*.db
+.vs
