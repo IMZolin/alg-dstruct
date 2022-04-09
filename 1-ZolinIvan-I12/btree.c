@@ -75,6 +75,21 @@ bool btInsert(BTree* tree, const int key) {
     return _insertNonfull(oldRoot, key, tree->T);
 }
 
+void btPrint(BTreeNode* root, const int T) {
+    if (root == NULL) {
+        return;
+    }
+    for (int i = 0; i < 2 * T - 1; i++)
+    {
+        btPrint(root->children[i], T);
+        if (root->keys[i] != -1)
+        {
+            printf("%d", root->keys[i]);
+        }
+        btPrint(root->children[2 * T], T);
+    }
+}
+
 bool _insertNonfull(BTreeNode* node, const int key, const int t) {
     // node should not be full
     assert(node->numKeys < 2 * t - 1);

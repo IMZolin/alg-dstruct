@@ -41,6 +41,8 @@ bool btInsert(BTree* tree, const int key);
 void btDelete(BTree* tree, const int key);
 // Free the tree
 void btDestroy(BTree* tree);
+//Print the tree
+void btPrint(BTreeNode* root, const int T);
 
 //#############################################################################
 //                               HELPER METHODS(WITH THE NODES)
