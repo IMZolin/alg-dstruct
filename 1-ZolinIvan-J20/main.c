@@ -11,7 +11,7 @@ typedef struct node
     struct node* next;
 } node;
 
-unsigned int hash(const char* str)
+unsigned int Hashify(const char* str)
 {
     unsigned int hash = 0;
     for (int i = 0; str[i] != '\0'; i++)
@@ -22,9 +22,9 @@ unsigned int hash(const char* str)
 }
 
 
-static int lookup(node* table[], const char* key)
+static int Find(node* table[], const char* key)
 {
-    unsigned index = hash(key);
+    unsigned index = Hashify(key);
     const node* it = table[index];
     while (it != NULL && strcmp(it->data, key) != 0)
     {
@@ -33,11 +33,11 @@ static int lookup(node* table[], const char* key)
     return it != NULL;
 }
 
-int insert(node* table[], char* key)
+int Insert(node* table[], char* key)
 {
-    if (!lookup(table, key))
+    if (!Find(table, key))
     {
-        unsigned index = hash(key);
+        unsigned index = Hashify(key);
         node* new_node = (node*)malloc(sizeof * new_node);
 
         if (new_node == NULL)
@@ -56,10 +56,10 @@ int insert(node* table[], char* key)
     return 0;
 }
 
-int delete(node* table[], char* key)
+int Delete(node* table[], char* key)
 {
-    if (lookup(table, key)) {
-        unsigned int index = hash(key);
+    if (Find(table, key)) {
+        unsigned int index = Hashify(key);
         node* it = table[index];
         node* prev = NULL;
         while (strcmp(it->data, key) != 0) {
@@ -73,6 +73,29 @@ int delete(node* table[], char* key)
     }
     return 0;
 }
+void nodeDestroy(node* table)
+{
+    node* del = table;
+    while (table != NULL)
+    {
+        table = del->next;
+        free(del);
+        del = table;
+    }
+}
+void Destroy(node* table[])
+{
+    if (table == NULL)
+        return;
+    else
+    {
+        for (int i = 0; i < TABLESIZE; i++)
+        {
+            if (table[i] != NULL)
+                nodeDestroy(table[i]);
+        }
+    }
+}
 
 int main() {
     node* table[TABLESIZE] = { 0 };
@@ -82,22 +105,22 @@ int main() {
 
         if (command == 'a') {
             scanf("%s", &value);
-            insert(table, value);
+            Insert(table, value);
         }
         if (command == 'f') {
             scanf("%s", &value);
-            if (lookup(table, value)) {
+            if (Find(table, value)) {
                 printf("%s", "yes\n");
             }
             else { printf("%s", "no\n"); }
         }
         if (command == 'r') {
             scanf("%s", &value);
-            delete(table, value);
+            Delete(table, value);
         }
         if (command == 'q')
         {
-            delete(table, value);
+            Destroy(table);
             return 0;
         }
     }
